@@ -19,51 +19,7 @@
 // });
 
 // Sample data
-let books = [
-  {
-    id: 1,
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    status: "Read",
-    rating: 5
-  },
-  {
-    id: 2,
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    status: "Read",
-    rating: 4
-  },
-  {
-    id: 3,
-    title: "1984",
-    author: "George Orwell",
-    status: "To Read",
-    rating: 0
-  },
-  {
-    id: 4,
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-    status: "Read",
-    rating: 5
-  },
-  {
-    id: 5,
-    title: "The Catcher in the Rye",
-    author: "J.D. Salinger",
-    status: "To Read",
-    rating: 0
-  },
-  {
-    id: 6,
-    title: "Lord of the Flies",
-    author: "William Golding",
-    status: "Read",
-    rating: 3
-  }
-];
-
+let books = [];
 let nextId = 7;
 
 // Create star rating HTML
@@ -133,7 +89,7 @@ function renderBooks() {
     bookCount.textContent = "0 books in your collection";
   } else {
     emptyState.style.display = "none";
-    booksGrid.innerHTML = books.map(book => createBookCard(book)).join("");
+    booksGrid.innerHTML = books.map((book) => createBookCard(book)).join("");
     bookCount.textContent = `${books.length} books in your collection`;
 
     // Re-initialize Lucide icons for new content
@@ -159,7 +115,7 @@ function addBook(event) {
     title: formData.get("title"),
     author: formData.get("author"),
     status: formData.get("status"),
-    rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0
+    rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0,
   };
 
   books.push(newBook);
@@ -170,14 +126,14 @@ function addBook(event) {
 // Delete book
 function deleteBook(id) {
   if (confirm("Are you sure you want to delete this book?")) {
-    books = books.filter(book => book.id !== id);
+    books = books.filter((book) => book.id !== id);
     renderBooks();
   }
 }
 
 // Edit book (simple implementation)
 function editBook(id) {
-  const book = books.find(b => b.id === id);
+  const book = books.find((b) => b.id === id);
   if (!book) return;
 
   const newTitle = prompt("Enter new title:", book.title);
@@ -214,5 +170,10 @@ window.editBook = editBook;
 // Event listeners
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bookForm").addEventListener("submit", addBook);
-  renderBooks();
+  fetch("http://localhost:3006/books")
+    .then((res) => res.json())
+    .then((data) => {
+      books = data;
+      renderBooks();
+    });
 });
