@@ -1,5 +1,5 @@
 // Sample data
-// let books= [];
+let books = [];
 
 let nextId = 7;
 
@@ -70,7 +70,7 @@ function renderBooks(books) {
     bookCount.textContent = "0 books in your collection";
   } else {
     emptyState.style.display = "none";
-    booksGrid.innerHTML = books.map(book => createBookCard(book)).join("");
+    booksGrid.innerHTML = books.map((book) => createBookCard(book)).join("");
     bookCount.textContent = `${books.length} books in your collection`;
   }
 }
@@ -85,25 +85,39 @@ function addBook(event) {
     title: formData.get("title"),
     author: formData.get("author"),
     status: formData.get("status"),
-    rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0
+    rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0,
   };
-
-  books.push(newBook);
-  renderBooks();
-  event.target.reset();
+  fetch("http://localhost:3000/books", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newBook),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Book added:", data);
+      books.push(newBook);
+      renderBooks(books);
+      event.target.reset();
+    })
+    .catch((error) => {
+      console.error("Error adding book:", error);
+    });
 }
 
 // Delete book
 function deleteBook(id) {
   if (confirm("Are you sure you want to delete this book?")) {
-    books = books.filter(book => book.id !== id);
-    renderBooks();
+    books = books.filter((book) => book.id !== id);
+    renderBooks(books);
+    fetch(`http://localhost:3000/books/${id}`, {
+      method: "DELETE",
+    });
   }
 }
 
 // Edit book (simple implementation)
 function editBook(id) {
-  const book = books.find(b => b.id === id);
+  const book = books.find((b) => b.id === id);
   if (!book) return;
 
   const newTitle = prompt("Enter new title:", book.title);
@@ -128,8 +142,20 @@ function editBook(id) {
   book.author = newAuthor;
   book.status = newStatus;
   book.rating = newStatus === "Read" ? newRating : 0;
+  fetch(`http://localhost:3000/books/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(book),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Book updated:", data);
+    })
+    .catch((error) => {
+      console.error("Error updating book:", error);
+    });
 
-  renderBooks();
+  renderBooks(books);
 }
 
 // Make functions global so they can be called from HTML
@@ -141,6 +167,10 @@ window.editBook = editBook;
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bookForm").addEventListener("submit", addBook);
   fetch("http://127.0.0.1:3000/books")
-    .then(res => res.json())
-    .then(data => renderBooks(data));
+    .then((res) => res.json())
+
+    .then((data) => {
+      books = data;
+      renderBooks(books);
+    });
 });
