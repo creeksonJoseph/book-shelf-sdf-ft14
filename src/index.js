@@ -1,25 +1,6 @@
-// import {
-//   createIcons,
-//   Library,
-//   Plus,
-//   FileEdit as Edit3,
-//   Trash2,
-//   Star
-// } from "lucide";
-
-// // Initialize Lucide icons
-// createIcons({
-//   icons: {
-//     Library,
-//     Plus,
-//     Edit3,
-//     Trash2,
-//     Star
-//   }
-// });
-
 // Sample data
-let books = [];
+// let books= [];
+
 let nextId = 7;
 
 // Create star rating HTML
@@ -64,11 +45,11 @@ function createBookCard(book) {
                 
                 <div class="flex items-center gap-2 pt-2">
                     <button onclick="editBook(${book.id})" class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors">
-                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                        <img src="./assets/img/pen-line.svg" height="16px" width="16px" alt="Delete icon">
                         Edit
                     </button>
                     <button onclick="deleteBook(${book.id})" class="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors">
-                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        <img src="./assets/img/trash-2.svg" height="16px" width="16px" alt="Delete icon">
                         Delete
                     </button>
                 </div>
@@ -78,7 +59,7 @@ function createBookCard(book) {
 }
 
 // Render books
-function renderBooks() {
+function renderBooks(books) {
   const booksGrid = document.getElementById("booksGrid");
   const emptyState = document.getElementById("emptyState");
   const bookCount = document.getElementById("bookCount");
@@ -89,19 +70,8 @@ function renderBooks() {
     bookCount.textContent = "0 books in your collection";
   } else {
     emptyState.style.display = "none";
-    booksGrid.innerHTML = books.map((book) => createBookCard(book)).join("");
+    booksGrid.innerHTML = books.map(book => createBookCard(book)).join("");
     bookCount.textContent = `${books.length} books in your collection`;
-
-    // Re-initialize Lucide icons for new content
-    // createIcons({
-    //   icons: {
-    //     Library,
-    //     Plus,
-    //     Edit3,
-    //     Trash2,
-    //     Star
-    //   }
-    // });
   }
 }
 
@@ -115,7 +85,7 @@ function addBook(event) {
     title: formData.get("title"),
     author: formData.get("author"),
     status: formData.get("status"),
-    rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0,
+    rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0
   };
 
   books.push(newBook);
@@ -126,14 +96,14 @@ function addBook(event) {
 // Delete book
 function deleteBook(id) {
   if (confirm("Are you sure you want to delete this book?")) {
-    books = books.filter((book) => book.id !== id);
+    books = books.filter(book => book.id !== id);
     renderBooks();
   }
 }
 
 // Edit book (simple implementation)
 function editBook(id) {
-  const book = books.find((b) => b.id === id);
+  const book = books.find(b => b.id === id);
   if (!book) return;
 
   const newTitle = prompt("Enter new title:", book.title);
@@ -170,10 +140,7 @@ window.editBook = editBook;
 // Event listeners
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bookForm").addEventListener("submit", addBook);
-  fetch("http://localhost:3006/books")
-    .then((res) => res.json())
-    .then((data) => {
-      books = data;
-      renderBooks();
-    });
+  fetch("http://127.0.0.1:3000/books")
+    .then(res => res.json())
+    .then(data => renderBooks(data));
 });
