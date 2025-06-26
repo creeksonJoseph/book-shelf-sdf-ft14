@@ -2,6 +2,7 @@
   "name": "book-shelf",
   "version": "1.0.0",
   "scripts": {
+    "server": "json-server --watch db.json --port 3000 --host",
     "build": "npx @tailwindcss/cli -i ./index.css -o ./src/styles.css",
     "watch": "npx @tailwindcss/cli -i ./index.css -o ./src/styles.css --watch"
   },
