@@ -1,5 +1,6 @@
 // Sample data
 let books = [];
+const url = "https://json-server-yp7e.onrender.com";
 
 let nextId = 7;
 
@@ -87,7 +88,7 @@ function addBook(event) {
     status: formData.get("status"),
     rating: formData.get("rating") ? parseInt(formData.get("rating")) : 0,
   };
-  fetch("https://book-shelf-sdf-ft14-4.onrender.com/books", {
+  fetch(`${url}/books`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newBook),
@@ -109,7 +110,7 @@ function deleteBook(id) {
   if (confirm("Are you sure you want to delete this book?")) {
     books = books.filter((book) => book.id !== id);
     renderBooks(books);
-    fetch(`https://book-shelf-sdf-ft14-4.onrender.com/books/${id}`, {
+    fetch(`${url}/books/${id}`, {
       method: "DELETE",
     });
   }
@@ -142,7 +143,7 @@ function editBook(id) {
   book.author = newAuthor;
   book.status = newStatus;
   book.rating = newStatus === "Read" ? newRating : 0;
-  fetch(`https://book-shelf-sdf-ft14-4.onrender.com/books/${id}`, {
+  fetch(`${url}/books/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(book),
