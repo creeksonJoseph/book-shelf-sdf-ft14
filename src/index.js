@@ -167,7 +167,7 @@ window.editBook = editBook;
 // Event listeners
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("bookForm").addEventListener("submit", addBook);
-  fetch("https://book-shelf-sdf-ft14-4.onrender.com/books/")
+  fetch(`${url}/books/`)
     .then((res) => res.json())
 
     .then((data) => {
